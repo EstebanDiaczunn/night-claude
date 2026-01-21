@@ -1,0 +1,767 @@
+<!doctype html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>NightClaude 🌙</title>
+        <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+        <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+        <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+        <link
+            href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@300;400;600&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            :root {
+                --bg: #09090b;
+                --surface: #18181b;
+                --border: #27272a;
+                --text: #fafafa;
+                --muted: #a1a1aa;
+                --accent: #8b5cf6;
+                --success: #22c55e;
+                --warning: #f59e0b;
+                --error: #ef4444;
+            }
+            body {
+                font-family: "Space Grotesk", sans-serif;
+                background: var(--bg);
+                color: var(--text);
+                min-height: 100vh;
+            }
+            .container {
+                max-width: 640px;
+                margin: 0 auto;
+                padding: 2rem 1rem;
+            }
+            .header {
+                text-align: center;
+                margin-bottom: 2rem;
+            }
+            .logo {
+                font-size: 3.5rem;
+                margin-bottom: 0.25rem;
+            }
+            .title {
+                font-size: 1.75rem;
+                font-weight: 300;
+            }
+            .subtitle {
+                color: var(--muted);
+                font-size: 0.875rem;
+            }
+            .card {
+                background: var(--surface);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                padding: 1.25rem;
+                margin-bottom: 0.75rem;
+            }
+            .label {
+                font-size: 0.7rem;
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+                color: var(--muted);
+                margin-bottom: 0.5rem;
+            }
+            input,
+            textarea {
+                width: 100%;
+                background: var(--bg);
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                padding: 0.75rem;
+                color: var(--text);
+                font-family: "JetBrains Mono", monospace;
+                font-size: 0.8rem;
+            }
+            input:focus,
+            textarea:focus {
+                outline: none;
+                border-color: var(--accent);
+            }
+            textarea {
+                min-height: 120px;
+                resize: vertical;
+            }
+            .row {
+                display: flex;
+                gap: 0.75rem;
+            }
+            .row > * {
+                flex: 1;
+            }
+            .btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+                width: 100%;
+                padding: 0.875rem;
+                border: none;
+                border-radius: 10px;
+                font-family: inherit;
+                font-size: 0.9rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.15s;
+            }
+            .btn-primary {
+                background: var(--accent);
+                color: white;
+            }
+            .btn-primary:hover:not(:disabled) {
+                filter: brightness(1.1);
+                transform: translateY(-1px);
+            }
+            .btn-secondary {
+                background: var(--surface);
+                border: 1px solid var(--border);
+                color: var(--text);
+            }
+            .btn-success {
+                background: var(--success);
+                color: white;
+            }
+            .btn-warning {
+                background: var(--warning);
+                color: black;
+            }
+            .btn:disabled {
+                opacity: 0.4;
+                cursor: not-allowed;
+            }
+            .usage-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 0.75rem;
+                margin-bottom: 1rem;
+            }
+            .usage-card {
+                background: var(--bg);
+                border-radius: 8px;
+                padding: 0.875rem;
+            }
+            .usage-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 0.5rem;
+            }
+            .usage-label {
+                font-size: 0.7rem;
+                color: var(--muted);
+                text-transform: uppercase;
+            }
+            .usage-value {
+                font-size: 1.25rem;
+                font-weight: 600;
+                font-family: "JetBrains Mono", monospace;
+            }
+            .usage-bar {
+                height: 4px;
+                background: var(--border);
+                border-radius: 2px;
+                overflow: hidden;
+            }
+            .usage-fill {
+                height: 100%;
+                border-radius: 2px;
+                transition: width 0.5s;
+            }
+            .usage-fill.ok {
+                background: var(--success);
+            }
+            .usage-fill.warn {
+                background: var(--warning);
+            }
+            .usage-fill.danger {
+                background: var(--error);
+            }
+            .progress-container {
+                text-align: center;
+                padding: 1.5rem 0;
+            }
+            .progress-icon {
+                font-size: 4rem;
+                margin-bottom: 0.5rem;
+            }
+            .progress-icon.running {
+                animation: pulse 2s infinite;
+            }
+            @keyframes pulse {
+                0%,
+                100% {
+                    transform: scale(1);
+                }
+                50% {
+                    transform: scale(1.08);
+                    opacity: 0.8;
+                }
+            }
+            .progress-bar {
+                height: 4px;
+                background: var(--border);
+                border-radius: 2px;
+                margin: 1rem 0;
+                overflow: hidden;
+            }
+            .progress-fill {
+                height: 100%;
+                background: linear-gradient(90deg, var(--accent), #a78bfa);
+                transition: width 0.5s;
+            }
+            .stats {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 0.5rem;
+                margin-bottom: 1rem;
+            }
+            .stat {
+                background: var(--bg);
+                border-radius: 8px;
+                padding: 0.75rem;
+                text-align: center;
+            }
+            .stat-value {
+                font-size: 1.25rem;
+                font-weight: 600;
+                font-family: "JetBrains Mono", monospace;
+            }
+            .stat-label {
+                font-size: 0.65rem;
+                color: var(--muted);
+                text-transform: uppercase;
+            }
+            .log {
+                max-height: 180px;
+                overflow-y: auto;
+                font-family: "JetBrains Mono", monospace;
+                font-size: 0.7rem;
+                background: var(--bg);
+                border-radius: 8px;
+                padding: 0.75rem;
+            }
+            .log-entry {
+                padding: 0.2rem 0;
+                opacity: 0.9;
+            }
+            .log-time {
+                color: var(--muted);
+            }
+            .log-type {
+                display: inline-block;
+                padding: 0.1rem 0.3rem;
+                border-radius: 3px;
+                font-size: 0.6rem;
+                margin: 0 0.3rem;
+            }
+            .log-type.done {
+                background: var(--success);
+            }
+            .log-type.error {
+                background: var(--error);
+            }
+            .log-type.warning,
+            .log-type.pause {
+                background: var(--warning);
+                color: black;
+            }
+            .log-type.git {
+                background: #8b5cf6;
+            }
+            .log-type.task {
+                background: var(--accent);
+            }
+            .commit {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.5rem;
+                background: var(--bg);
+                border-radius: 6px;
+                margin-bottom: 0.4rem;
+                font-size: 0.8rem;
+            }
+            .pause-notice {
+                background: rgba(245, 158, 11, 0.1);
+                border: 1px solid var(--warning);
+                border-radius: 10px;
+                padding: 1rem;
+                margin-bottom: 1rem;
+                text-align: center;
+            }
+            .pause-notice strong {
+                color: var(--warning);
+            }
+            .branch {
+                display: inline-block;
+                background: rgba(139, 92, 246, 0.15);
+                color: var(--accent);
+                padding: 0.4rem 0.75rem;
+                border-radius: 6px;
+                font-family: "JetBrains Mono", monospace;
+                font-size: 0.75rem;
+            }
+            .actions {
+                display: flex;
+                gap: 0.5rem;
+                margin-top: 1rem;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="root"></div>
+        <script type="text/babel">
+            const { useState, useEffect, useRef } = React;
+            const App = () => {
+                const [screen, setScreen] = useState("config");
+                const [project, setProject] = useState("");
+                const [tasks, setTasks] = useState("");
+                const [maxIterations, setMaxIterations] = useState(50);
+                const [usageLimit, setUsageLimit] = useState(90);
+                const [state, setState] = useState(null);
+                const [feedback, setFeedback] = useState("");
+                const ws = useRef(null);
+
+                useEffect(() => {
+                    ws.current = new WebSocket(`ws://${window.location.host}`);
+                    ws.current.onmessage = (e) => {
+                        const msg = JSON.parse(e.data);
+                        if (msg.type === "status" || msg.type === "usage") {
+                            setState((prev) => ({ ...prev, ...msg.data }));
+                            if (msg.data.status === "running")
+                                setScreen("running");
+                            else if (
+                                ["completed", "paused", "stopped"].includes(
+                                    msg.data.status,
+                                )
+                            )
+                                setScreen("summary");
+                        }
+                    };
+                    fetch("/api/state")
+                        .then((r) => r.json())
+                        .then((data) => {
+                            setState(data);
+                            if (data.status === "running") setScreen("running");
+                            else if (
+                                ["completed", "paused", "stopped"].includes(
+                                    data.status,
+                                )
+                            )
+                                setScreen("summary");
+                        });
+                    return () => ws.current?.close();
+                }, []);
+
+                const handleStart = async () => {
+                    const taskList = tasks.split("\n").filter((t) => t.trim());
+                    if (!project || !taskList.length)
+                        return alert("Completá proyecto y tareas");
+                    await fetch("/api/config", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            project,
+                            tasks: taskList,
+                            maxIterations,
+                            usageLimit,
+                        }),
+                    });
+                    await fetch("/api/start", { method: "POST" });
+                };
+                const handleContinue = () =>
+                    fetch("/api/continue", { method: "POST" });
+                const handleFeedback = async () => {
+                    if (!feedback.trim()) return;
+                    await fetch("/api/feedback", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ feedback }),
+                    });
+                    await fetch("/api/start", { method: "POST" });
+                    setFeedback("");
+                };
+                const handleReset = async () => {
+                    await fetch("/api/reset", { method: "POST" });
+                    setState(null);
+                    setScreen("config");
+                    setProject("");
+                    setTasks("");
+                };
+                const getUsageClass = (v) =>
+                    v >= 90 ? "danger" : v >= 70 ? "warn" : "ok";
+                const progress = state
+                    ? Math.round(
+                          ((state.currentTask || 0) /
+                              Math.max(state.tasks?.length || 1, 1)) *
+                              100,
+                      )
+                    : 0;
+
+                if (screen === "config") {
+                    return (
+                        <div className="container">
+                            <div className="header">
+                                <div className="logo">🌙</div>
+                                <h1 className="title">NightClaude</h1>
+                                <p className="subtitle">
+                                    Claude trabaja mientras dormís
+                                </p>
+                            </div>
+                            <div className="card">
+                                <div className="label">Proyecto (ruta)</div>
+                                <input
+                                    value={project}
+                                    onChange={(e) => setProject(e.target.value)}
+                                    placeholder="C:\Users\naiki\projects\mi-app"
+                                />
+                            </div>
+                            <div className="card">
+                                <div className="label">
+                                    Tareas (una por línea)
+                                </div>
+                                <textarea
+                                    value={tasks}
+                                    onChange={(e) => setTasks(e.target.value)}
+                                    placeholder="Implementar cache&#10;Agregar tests&#10;Optimizar queries"
+                                />
+                            </div>
+                            <div className="card">
+                                <div className="row">
+                                    <div>
+                                        <div className="label">Max iter</div>
+                                        <input
+                                            type="number"
+                                            value={maxIterations}
+                                            onChange={(e) =>
+                                                setMaxIterations(
+                                                    +e.target.value,
+                                                )
+                                            }
+                                        />
+                                    </div>
+                                    <div>
+                                        <div className="label">Pausar al %</div>
+                                        <input
+                                            type="number"
+                                            value={usageLimit}
+                                            onChange={(e) =>
+                                                setUsageLimit(+e.target.value)
+                                            }
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <button
+                                className="btn btn-primary"
+                                onClick={handleStart}
+                                disabled={!project || !tasks.trim()}
+                            >
+                                Buenas noches 🌙
+                            </button>
+                        </div>
+                    );
+                }
+
+                if (screen === "running") {
+                    return (
+                        <div className="container">
+                            <div className="progress-container">
+                                <div className="progress-icon running">🌙</div>
+                                <h2>Claude trabajando...</h2>
+                                <p className="subtitle">Podés dormir</p>
+                                <div className="progress-bar">
+                                    <div
+                                        className="progress-fill"
+                                        style={{ width: `${progress}%` }}
+                                    />
+                                </div>
+                                <p
+                                    style={{
+                                        color: "var(--muted)",
+                                        fontSize: "0.8rem",
+                                    }}
+                                >
+                                    Tarea {(state?.currentTask || 0) + 1}/
+                                    {state?.tasks?.length || 0} · Iter{" "}
+                                    {state?.iteration || 0}
+                                </p>
+                            </div>
+                            <div className="usage-grid">
+                                <div className="usage-card">
+                                    <div className="usage-header">
+                                        <span className="usage-label">
+                                            5 horas
+                                        </span>
+                                        <span className="usage-value">
+                                            {state?.usage?.fiveHour || 0}%
+                                        </span>
+                                    </div>
+                                    <div className="usage-bar">
+                                        <div
+                                            className={`usage-fill ${getUsageClass(state?.usage?.fiveHour || 0)}`}
+                                            style={{
+                                                width: `${state?.usage?.fiveHour || 0}%`,
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="usage-card">
+                                    <div className="usage-header">
+                                        <span className="usage-label">
+                                            7 días
+                                        </span>
+                                        <span className="usage-value">
+                                            {state?.usage?.sevenDay || 0}%
+                                        </span>
+                                    </div>
+                                    <div className="usage-bar">
+                                        <div
+                                            className={`usage-fill ${getUsageClass(state?.usage?.sevenDay || 0)}`}
+                                            style={{
+                                                width: `${state?.usage?.sevenDay || 0}%`,
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            {state?.branch && (
+                                <div
+                                    style={{
+                                        textAlign: "center",
+                                        marginBottom: "0.75rem",
+                                    }}
+                                >
+                                    <span className="branch">
+                                        {state.branch}
+                                    </span>
+                                </div>
+                            )}
+                            <div className="card">
+                                <div className="label">Log</div>
+                                <div className="log">
+                                    {(state?.log || [])
+                                        .slice(-12)
+                                        .map((l, i) => (
+                                            <div key={i} className="log-entry">
+                                                <span className="log-time">
+                                                    {l.time
+                                                        ?.split("T")[1]
+                                                        ?.substring(0, 8)}
+                                                </span>
+                                                <span
+                                                    className={`log-type ${l.type}`}
+                                                >
+                                                    {l.type}
+                                                </span>
+                                                {l.message?.substring(0, 60)}
+                                            </div>
+                                        ))}
+                                </div>
+                            </div>
+                        </div>
+                    );
+                }
+
+                if (screen === "summary") {
+                    const isPaused = state?.status === "paused";
+                    return (
+                        <div className="container">
+                            <div className="header">
+                                <div className="logo">
+                                    {isPaused ? "⏸️" : "☀️"}
+                                </div>
+                                <h1 className="title">
+                                    {isPaused ? "Pausado" : "¡Buenos días!"}
+                                </h1>
+                                <p className="subtitle">
+                                    {state?.pauseReason || "Resumen"}
+                                </p>
+                            </div>
+                            {isPaused && (
+                                <div className="pause-notice">
+                                    <strong>⚠️ Límite alcanzado</strong>
+                                    <p
+                                        style={{
+                                            marginTop: "0.5rem",
+                                            color: "var(--muted)",
+                                            fontSize: "0.8rem",
+                                        }}
+                                    >
+                                        Continuá cuando se reinicie la cuota
+                                    </p>
+                                </div>
+                            )}
+                            <div className="usage-grid">
+                                <div className="usage-card">
+                                    <div className="usage-header">
+                                        <span className="usage-label">5h</span>
+                                        <span
+                                            className="usage-value"
+                                            style={{
+                                                color:
+                                                    state?.usage?.fiveHour >= 90
+                                                        ? "var(--error)"
+                                                        : "inherit",
+                                            }}
+                                        >
+                                            {state?.usage?.fiveHour || 0}%
+                                        </span>
+                                    </div>
+                                    <div className="usage-bar">
+                                        <div
+                                            className={`usage-fill ${getUsageClass(state?.usage?.fiveHour || 0)}`}
+                                            style={{
+                                                width: `${state?.usage?.fiveHour || 0}%`,
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="usage-card">
+                                    <div className="usage-header">
+                                        <span className="usage-label">7d</span>
+                                        <span
+                                            className="usage-value"
+                                            style={{
+                                                color:
+                                                    state?.usage?.sevenDay >= 90
+                                                        ? "var(--error)"
+                                                        : "inherit",
+                                            }}
+                                        >
+                                            {state?.usage?.sevenDay || 0}%
+                                        </span>
+                                    </div>
+                                    <div className="usage-bar">
+                                        <div
+                                            className={`usage-fill ${getUsageClass(state?.usage?.sevenDay || 0)}`}
+                                            style={{
+                                                width: `${state?.usage?.sevenDay || 0}%`,
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="stats">
+                                <div className="stat">
+                                    <div className="stat-value">
+                                        {state?.summary?.duration || "—"}
+                                    </div>
+                                    <div className="stat-label">Duración</div>
+                                </div>
+                                <div className="stat">
+                                    <div
+                                        className="stat-value"
+                                        style={{ color: "var(--success)" }}
+                                    >
+                                        {state?.summary?.tasksCompleted || 0}
+                                    </div>
+                                    <div className="stat-label">Listas</div>
+                                </div>
+                                <div className="stat">
+                                    <div
+                                        className="stat-value"
+                                        style={{ color: "var(--warning)" }}
+                                    >
+                                        {state?.summary?.tasksBlocked || 0}
+                                    </div>
+                                    <div className="stat-label">Bloqueadas</div>
+                                </div>
+                                <div className="stat">
+                                    <div className="stat-value">
+                                        {state?.summary?.tasksPending || 0}
+                                    </div>
+                                    <div className="stat-label">Pendientes</div>
+                                </div>
+                            </div>
+                            {state?.branch && (
+                                <div
+                                    style={{
+                                        textAlign: "center",
+                                        marginBottom: "0.75rem",
+                                    }}
+                                >
+                                    <span className="branch">
+                                        {state.branch}
+                                    </span>
+                                </div>
+                            )}
+                            <div className="card">
+                                <div className="label">Commits</div>
+                                {(state?.summary?.commits || [])
+                                    .slice(0, 6)
+                                    .map((c, i) => (
+                                        <div key={i} className="commit">
+                                            <span
+                                                style={{
+                                                    color: "var(--success)",
+                                                }}
+                                            >
+                                                ✓
+                                            </span>
+                                            {c}
+                                        </div>
+                                    ))}
+                                {!state?.summary?.commits?.length && (
+                                    <p
+                                        style={{
+                                            color: "var(--muted)",
+                                            textAlign: "center",
+                                        }}
+                                    >
+                                        Sin commits
+                                    </p>
+                                )}
+                            </div>
+                            <div className="card">
+                                <div className="label">Feedback</div>
+                                <textarea
+                                    value={feedback}
+                                    onChange={(e) =>
+                                        setFeedback(e.target.value)
+                                    }
+                                    placeholder="Correcciones..."
+                                    style={{ minHeight: "70px" }}
+                                />
+                            </div>
+                            <div className="actions">
+                                <button
+                                    className="btn btn-secondary"
+                                    onClick={handleReset}
+                                >
+                                    Nueva
+                                </button>
+                                {isPaused && (
+                                    <button
+                                        className="btn btn-warning"
+                                        onClick={handleContinue}
+                                    >
+                                        ▶ Continuar
+                                    </button>
+                                )}
+                                <button
+                                    className="btn btn-primary"
+                                    onClick={handleFeedback}
+                                    disabled={!feedback.trim()}
+                                >
+                                    🔄 Corregir
+                                </button>
+                            </div>
+                        </div>
+                    );
+                }
+                return null;
+            };
+            ReactDOM.createRoot(document.getElementById("root")).render(
+                <App />,
+            );
+        </script>
+    </body>
+</html>
