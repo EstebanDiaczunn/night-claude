@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+.nightclaude.log
+
+# Runtime state
+.nightclaude-state.json
+
+# Generated summaries (keep these in target projects, not here)
+NIGHTCLAUDE_SUMMARY.md
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
